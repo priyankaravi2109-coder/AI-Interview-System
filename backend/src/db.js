@@ -1,0 +1,4 @@
+const {Pool}=require('pg'); const bcrypt=require('bcryptjs');
+const pool=new Pool({host:process.env.DB_HOST||'localhost',port:process.env.DB_PORT||5432,database:process.env.DB_NAME||'ai_interview_system',user:process.env.DB_USER||'postgres',password:process.env.DB_PASSWORD});
+async function init(){const fs=require('fs');const sql=fs.readFileSync(require('path').join(__dirname,'..','database.sql'),'utf8');await pool.query(sql);const hash=await bcrypt.hash('Admin@12345',12);await pool.query(`INSERT INTO app_users(email,password_hash,role,must_set_password) VALUES('admin@aiinterview.com',$1,'admin',false) ON CONFLICT(email) DO UPDATE SET role='admin'`,[hash]);}
+module.exports={pool,init};
